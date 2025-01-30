@@ -1,0 +1,5 @@
+SLACK_BOT_TOKEN=xoxb-not-a-real-token-this-will-not-work
+SLACK_SIGNING_SECRET=notarealsigningsecrettoolol
+port=smth # Optional, depends in your mood, it'll go to default ports..
+
+- Note for me: do not add quotes or smth :bye:
