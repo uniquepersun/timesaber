@@ -142,3 +142,34 @@ def handle_shortcut_usage(body, logger, ack, client: WebClient):
             ],
         },
     )
+
+@app.view("")
+def handle_view_submission(ack, body, logger, client: WebClient):
+    ack()
+    logger.info(f"Data recieved; Recieved data:{body}")
+    link = create_link(body, logger)
+    client.view_push(
+        trigger_id=body["trigger_id"],
+        view={
+            "title":{
+                "type":"plain_text",
+                "text":"Here's yr magical link!",
+                "type":"modal",
+                "callback_id":"modal_copy_link",
+                "close":{
+                    "type":"plain_text",
+                    "text":"thank you",
+                    "emoji":True
+                },
+                "blocks":[
+                    {
+                        "type":"section",
+                        "text":{
+                            "type":"mrkdwn",
+                            "text":f"yr link: {link}.",
+                        }
+                    }
+                ]
+            }
+        }
+    )
