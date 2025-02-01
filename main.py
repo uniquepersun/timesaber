@@ -21,20 +21,26 @@ def epochtoiso(returnedtimestamp):
 
 def extractdata(body, logger):
     event_title = body["view"]["state"]["values"]["event_title"]["event_title_info"][
-        "value"]
+        "value"
+    ]
     logger.info(event_title)
     event_location = body["view"]["state"]["values"]["event_location"][
-        "event_location_info"]["value"]
+        "event_location_info"
+    ]["value"]
     logger.info(event_location)
     event_start = epochtoiso(
         int(
-            body["view"]["state"]["values"]["event_start"]["event_start_time"]["selected_date_time"]
+            body["view"]["state"]["values"]["event_start"]["event_start_time"][
+                "selected_date_time"
+            ]
         )
     )
     logger.info(event_start)
     event_end = epochtoiso(
         int(
-            body["view"]["state"]["values"]["event_end"]["event_end_time"]["selected_date_time"]
+            body["view"]["state"]["values"]["event_end"]["event_end_time"][
+                "selected_date_time"
+            ]
         )
     )
     logger.info(event_end)
@@ -147,8 +153,6 @@ def handle_view_submission(ack, body, logger, client: WebClient):
     link = event_data[0]
     event_title = event_data[1]
     event_location = event_data[2]
-    event_start = event_data[3]
-    event_end = event_data[4]
     user = body["user"]["id"]
     client.chat_postMessage(
         channel=user,
