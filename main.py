@@ -21,26 +21,20 @@ def epochtoiso(returnedtimestamp):
 
 def extractdata(body, logger):
     event_title = body["view"]["state"]["values"]["event_title"]["event_title_info"][
-        "value"
-    ]
+        "value"]
     logger.info(event_title)
     event_location = body["view"]["state"]["values"]["event_location"][
-        "event_location_info"
-    ]["value"]
+        "event_location_info"]["value"]
     logger.info(event_location)
     event_start = epochtoiso(
         int(
-            body["view"]["state"]["values"]["event_start"]["event_start_time"][
-                "selected_ts"
-            ]
+            body["view"]["state"]["values"]["event_start"]["event_start_time"]["selected_date_time"]
         )
     )
     logger.info(event_start)
     event_end = epochtoiso(
         int(
-            body["view"]["state"]["values"]["event_end"]["event_end_time"][
-                "selected_ts"
-            ]
+            body["view"]["state"]["values"]["event_end"]["event_end_time"]["selected_date_time"]
         )
     )
     logger.info(event_end)
@@ -48,12 +42,12 @@ def extractdata(body, logger):
 
 
 def create_link(body, logger):
-    extractdata(body, logger)
-    link = f"https://time.cs50.io/{event_start}/{event_end}?title={event_title}&location={event_location}"  # type: ignore
+    event_title, event_location, event_start, event_end = extractdata(body, logger)
+    link = f"https://time.cs50.io/{event_start}/{event_end}?title={event_title}&location={event_location}"
     return link
 
 
-@app.command("/create_eventtime_link")
+@app.command("/createeventtimelink")
 @app.shortcut("tttnnn")
 def handle_shortcut_usage(body, logger, ack, client: WebClient):
     ack()
@@ -65,6 +59,7 @@ def handle_shortcut_usage(body, logger, ack, client: WebClient):
             "title": {"type": "plain_text", "text": "timesaber!", "emoji": True},
             "submit": {"type": "plain_text", "text": "Get magical link", "emoji": True},
             "type": "modal",
+            "callback_id": "tttnnn",
             "close": {"type": "plain_text", "text": "No thanks", "emoji": True},
             "blocks": [
                 {
@@ -143,33 +138,27 @@ def handle_shortcut_usage(body, logger, ack, client: WebClient):
         },
     )
 
-@app.view("")
+
+@app.view("tttnnn")
 def handle_view_submission(ack, body, logger, client: WebClient):
     ack()
     logger.info(f"Data recieved; Recieved data:{body}")
     link = create_link(body, logger)
-    client.view_push(
+    client.views_push(
         trigger_id=body["trigger_id"],
         view={
-            "title":{
-                "type":"plain_text",
-                "text":"Here's yr magical link!",
-                "type":"modal",
-                "callback_id":"modal_copy_link",
-                "close":{
-                    "type":"plain_text",
-                    "text":"thank you",
-                    "emoji":True
-                },
-                "blocks":[
-                    {
-                        "type":"section",
-                        "text":{
-                            "type":"mrkdwn",
-                            "text":f"yr link: {link}.",
-                        }
-                    }
-                ]
-            }
-        }
+            "title": {"type": "plain_text", "text": "Here's yr magical link!"},
+            "type": "modal",
+            "callback_id": "modal_copy_link",
+            "close": {"type": "plain_text", "text": "thank you", "emoji": True},
+            "blocks": [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"yr link: {link}.",
+                    },
+                }
+            ],
+        },
     )
