@@ -44,7 +44,7 @@ def extractdata(body, logger):
 def create_link(body, logger):
     event_title, event_location, event_start, event_end = extractdata(body, logger)
     link = f"https://time.cs50.io/{event_start}/{event_end}?title={event_title}&location={event_location}"
-    return link
+    return link, event_title, event_location, event_start, event_end
 
 
 @app.command("/createeventtimelink")
@@ -143,22 +143,34 @@ def handle_shortcut_usage(body, logger, ack, client: WebClient):
 def handle_view_submission(ack, body, logger, client: WebClient):
     ack()
     logger.info(f"Data recieved; Recieved data:{body}")
-    link = create_link(body, logger)
-    client.views_push(
-        trigger_id=body["trigger_id"],
-        view={
-            "title": {"type": "plain_text", "text": "Here's yr magical link!"},
-            "type": "modal",
-            "callback_id": "modal_copy_link",
-            "close": {"type": "plain_text", "text": "thank you", "emoji": True},
-            "blocks": [
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f"yr link: {link}.",
-                    },
-                }
-            ],
-        },
+    event_data = create_link(body, logger)
+    link = event_data[0]
+    event_title = event_data[1]
+    event_location = event_data[2]
+    event_start = event_data[3]
+    event_end = event_data[4]
+    user = body["user"]["id"]
+    client.chat_postMessage(
+        channel=user,
+        text=f"Here's yr magical link: {link} for your {event_title} event at {event_location}.",
     )
+    # TODO: show a modal with the link instead of sending msg(erroring for now) & also log them on the home tab with all event info
+    # client.views_push(
+    #     trigger_id=body["trigger_id"],
+    #     view={
+    #         "title": {"type": "plain_text", "text": "Here's yr magical link!"},
+    #         "type": "modal",
+    #         "callback_id": "modal_copy_link",
+    #         "close": {"type": "plain_text", "text": "thank you", "emoji": True},
+    #         "blocks": [
+    #             {
+    #                 "type": "section",
+    #                 "text": {
+    #                     "type": "mrkdwn",
+    #                     "text": f"yr link: {link}.",
+    #                 },
+    #             }
+    #         ],
+    #     },
+    # )
+    
