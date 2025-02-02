@@ -4,6 +4,7 @@ import logging
 import slack_bolt
 from slack_sdk import WebClient
 import datetime
+import re
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -49,6 +50,8 @@ def extractdata(body, logger):
 
 def create_link(body, logger):
     event_title, event_location, event_start, event_end = extractdata(body, logger)
+    event_title = re.sub(r"\s+", "+", event_title)
+    event_location = re.sub(r"\s+", "+", event_location)
     link = f"https://time.cs50.io/{event_start}/{event_end}?title={event_title}&location={event_location}"
     return link, event_title, event_location, event_start, event_end
 
@@ -177,4 +180,3 @@ def handle_view_submission(ack, body, logger, client: WebClient):
     #         ],
     #     },
     # )
-    
