@@ -1,4 +1,4 @@
-# This is demo for the BOT: (you can also go to slack and try it yrself)
+# This is demo for the BOT: (you can also go to slack and try it yrself) <br> *if you're seeing this, I'm working on dockerizing and putting it on nest so it is not running, so DO NOT downvote!!*
 
  **So, use the bots shortcut**
 ![image](https://github.com/user-attachments/assets/63849e1d-ce47-4d31-91b5-d034fd12205e)
