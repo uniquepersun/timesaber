@@ -50,10 +50,12 @@ def extractdata(body, logger):
 
 def create_link(body, logger):
     event_title, event_location, event_start, event_end = extractdata(body, logger)
+    title = event_title
+    location = event_location
     event_title = re.sub(r"\s+", "+", event_title)
     event_location = re.sub(r"\s+", "+", event_location)
     link = f"https://time.cs50.io/{event_start}/{event_end}?title={event_title}&location={event_location}"
-    return link, event_title, event_location, event_start, event_end
+    return link, title, location, event_start, event_end
 
 
 @app.command("/createeventtimelink")
@@ -180,3 +182,42 @@ def handle_view_submission(ack, body, logger, client: WebClient):
     #         ],
     #     },
     # )
+
+
+@app.event("link_shared")
+def handle_link_shared(event, say, client:WebClient):
+    print(event)
+    links = event["links"]
+    user = event["user"]
+    
+    for link in links:
+        client.chat_postMessage(
+            channel=event["channel"],
+            thread_ts=event["message_ts"],
+            blocks= [
+    {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": f"heyy, I see you shared a event url:{link['url']}! would you like to add this event to yr calenders??"
+        }
+    },
+    {
+        "type": "actions",
+        "elements": [
+            {
+                "type": "button",
+                "text": {"type": "plain_text", "text": "Google"},
+                "url": "https://www.google.com/calendar/render?action=TEMPLATE&text=Write%20and%20Chill&details=We%20can%20work%20on%20different%20writing%20projects%20(stories,%20essays,%20research,%20anything!),%20get%20feedback%20or%20new%20ideas,%20or%20work%20on%20one%20joined%20story%20for%20fun!%20Anything%20goes!%20Join%20to%20have%20fun%20writing%20and%20chatting%20with%20your%20fellow%20Hack%20Clubbers!%20:)%0AHack%20Club%20Event%20by%20estella%20gu&location=https://hackclub.slack.com/archives/C07TNAZGMHS&dates=20250218T230000Z%2F20250219T000000Z",
+                "style": "primary"
+            },
+            {
+                "type": "button",
+                "text": {"type": "plain_text", "text": "GitHub"},
+                "url": "https://github.com",
+                "style": "danger"
+            }
+        ]
+    }
+])
+        
