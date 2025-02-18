@@ -58,6 +58,17 @@ def create_link(body, logger):
     return link, title, location, event_start, event_end
 
 
+def extract_data_from_link(link):
+    event_start = link.split("/")[3]
+    event_end = link.split("/")[4].split("?")[0]
+    event_title = link.split("?")[1].split("&")[0].split("=")[1]
+    event_location = link.split("?")[1].split("&")[1].split("=")[1]
+    event_desc = link.split("?")[1].split("&")[2].split("=")[1]
+    event_title = re.sub(r"\+", " ", event_title)
+    event_location = re.sub(r"\+", " ", event_location)
+    return event_start, event_end, event_title, event_location
+
+
 @app.command("/createeventtimelink")
 @app.shortcut("tttnnn")
 def handle_shortcut_usage(body, logger, ack, client: WebClient):
@@ -161,7 +172,32 @@ def handle_view_submission(ack, body, logger, client: WebClient):
     user = body["user"]["id"]
     client.chat_postMessage(
         channel=user,
-        text=f"Here's yr magical link: {link} for your {event_title} event at {event_location}.",
+        blocks=[
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"Here's yr magical link: {link} for your {event_title} event at {event_location}.",
+                },
+            },
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "text": {"type": "plain_text", "text": "Google calendar"},
+                        "url": f"https://www.google.com/calendar/render?action=TEMPLATE&text={event_title}&details=Event+Description&location=Event+Location&dates=YYYYMMDDTHHmmssZ/YYYYMMDDTHHmmssZ",
+                        "style": "danger",
+                    },
+                    {
+                        "type": "button",
+                        "text": {"type": "plain_text", "text": "Apple calendar"},
+                        "url": "https://apple.com",
+                        "style": "danger",
+                    },
+                ],
+            },
+        ],
     )
     # TODO: show a modal with the link instead of sending msg(erroring for now) & also log them on the home tab with all event info
     # client.views_push(
@@ -185,39 +221,44 @@ def handle_view_submission(ack, body, logger, client: WebClient):
 
 
 @app.event("link_shared")
-def handle_link_shared(event, say, client:WebClient):
+def handle_link_shared(event, ack, client: WebClient):
+    ack()
     print(event)
     links = event["links"]
     user = event["user"]
-    
     for link in links:
-        client.chat_postMessage(
-            channel=event["channel"],
-            thread_ts=event["message_ts"],
-            blocks= [
-    {
-        "type": "section",
-        "text": {
-            "type": "mrkdwn",
-            "text": f"heyy, I see you shared a event url:{link['url']}! would you like to add this event to yr calenders??"
-        }
-    },
-    {
-        "type": "actions",
-        "elements": [
-            {
-                "type": "button",
-                "text": {"type": "plain_text", "text": "Google"},
-                "url": "https://www.google.com/calendar/render?action=TEMPLATE&text=Write%20and%20Chill&details=We%20can%20work%20on%20different%20writing%20projects%20(stories,%20essays,%20research,%20anything!),%20get%20feedback%20or%20new%20ideas,%20or%20work%20on%20one%20joined%20story%20for%20fun!%20Anything%20goes!%20Join%20to%20have%20fun%20writing%20and%20chatting%20with%20your%20fellow%20Hack%20Clubbers!%20:)%0AHack%20Club%20Event%20by%20estella%20gu&location=https://hackclub.slack.com/archives/C07TNAZGMHS&dates=20250218T230000Z%2F20250219T000000Z",
-                "style": "primary"
-            },
-            {
-                "type": "button",
-                "text": {"type": "plain_text", "text": "GitHub"},
-                "url": "https://github.com",
-                "style": "danger"
-            }
-        ]
-    }
-])
-        
+        print(link)
+        # extract_data_from_link(link)
+        if user == "U078GJ63AQ0": # TODO: remove this
+            client.chat_postMessage(
+                channel=event["channel"],
+                thread_ts=event["message_ts"],
+                blocks=[
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": f"heyy, I see you shared a event url:{link['url']}! would you like to add this event to yr calenders??",
+                        },
+                    },
+                    {
+                        "type": "actions",
+                        "elements": [
+                            {
+                                "type": "button",
+                                "text": {"type": "plain_text", "text": "Google calendar"},
+                                "url": f"https://www.google.com/calendar/render?action=TEMPLATE&text=event_title&details=Event+Description&location=event_location&dates=YYYYMMDDTHHmmssZ/YYYYMMDDTHHmmssZ",
+                                "style": "danger",
+                            },
+                            {
+                                "type": "button",
+                                "text": {"type": "plain_text", "text": "Apple calendar"},
+                                "url": "https://apple.com",
+                                "style": "danger",
+                            },
+                        ],
+                    },
+                ],
+            )
+        else:
+            print("unauthorized user")
