@@ -229,7 +229,7 @@ def handle_link_shared(event, ack, client: WebClient):
     for link in links:
         print(link)
         # extract_data_from_link(link)
-        if user == "U078GJ63AQ0": # TODO: remove this
+        if user == "U078GJ63AQ0": # TODO: remove this check
             client.chat_postMessage(
                 channel=event["channel"],
                 thread_ts=event["message_ts"],
