@@ -2,6 +2,7 @@
 <br>
 Note: new  changes ain't live on slack yet...
 <br>
+
  **So, use the bots shortcut**
 ![image](https://github.com/user-attachments/assets/63849e1d-ce47-4d31-91b5-d034fd12205e)
 ---
