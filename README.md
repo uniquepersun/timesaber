@@ -18,4 +18,4 @@ Find me(`uniquepersun`) all over the web! :spider_web:
 - [bsky!](https://bsky.app/profile/uniquepersun.dev)
 - [instagram](https://instagram.com/uniquepersun) <br>
 - [X (formerly twitter)](https://x.com/uniquepersun) <br>
-- AND star this repo, thats a dare: [github](https://github.com/uniquepersun) <br>
+- AND star this repo, thats a dare: [github](https://github.com/uniquepersun/timesaber) <br>
