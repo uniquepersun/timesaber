@@ -2,7 +2,7 @@
 what's this? <br>
 ---
 a bot to create [time.cs50.io](https://time.cs50.io) links for meetings easily right from slack; <br>
-pss.. its not laziness but rather smartness yeaa :p
+_pss.. its not laziness but rather smartness yeaa :p_
 
 ## How this works?
 see the [demo.md](https://github.com/uniquepersun/timesaber/blob/main/demo.md)
