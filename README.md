@@ -1,7 +1,7 @@
 # timesaber
 what's this? <br>
 ---
-a bot to create time.cs50.io links for meetings easily right from slack; <br>
+a bot to create [time.cs50.io](https://time.cs50.io) links for meetings easily right from slack; <br>
 I will not define it as laziness but rather smartness yeaa :p
 
 ## How this works?
